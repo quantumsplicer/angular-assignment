@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import { registerLocaleData } from '@angular/common';
+import { formatDate, registerLocaleData } from '@angular/common';
 import localeEn from '@angular/common/locales/en';
 import { Chart } from 'angular-highcharts';
 // import { Options} from 'highcharts';

@@ -1,7 +1,25 @@
 <div class="root">
   <div class="divider">
+    <!-- <app-user-avatar></app-user-avatar> -->
     <div class="input_containers">
+      <app-drop-down-input id="component" [data]="AllComponents" />
+      <app-drop-down-input id="position" [data]="posData" />
+      <app-text-input id="width" placeholder="enter width" />
+      <app-text-input id="height" placeholder="enter height" />
+      <app-apply-button />
     </div>
+    <!-- <mat-list>
+      <a class="nav-link"
+         routerLinkActive="active-link"
+         [routerLinkActiveOptions]="{exact: true}"
+         *ngFor="let link of links" [routerLink]="[link.href]"
+      >
+        <mat-list-item>
+          <mat-icon mat-list-icon>{{link.icon}}</mat-icon>
+          <div mat-line>{{link.name}}</div>
+        </mat-list-item>
+      </a>
+    </mat-list> -->
   </div>
   <div class="component">
     <router-outlet class="content"></router-outlet>

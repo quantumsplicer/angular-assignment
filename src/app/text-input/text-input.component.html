@@ -1,0 +1,7 @@
+<div *ngIf="display" class="text-input-container">
+    <form class="example-form">
+        <mat-form-field class="example-full-width">
+            <input matInput [placeholder]="placeholder" (input)="onChange($event)" [value]="value"/>
+        </mat-form-field>
+    </form>
+</div>

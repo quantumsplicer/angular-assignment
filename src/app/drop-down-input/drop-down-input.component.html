@@ -1,0 +1,10 @@
+<div class="text-input-container">
+    <mat-form-field class="example-full-width">
+        <select matNativeControl required (change)="onChange($event)">
+            <option value="" selected disabled>Select {{id}}</option>
+            <option *ngFor="let item of data" [value]="item.value" >
+                {{item.viewValue}}
+            </option>
+        </select>
+    </mat-form-field>
+</div>

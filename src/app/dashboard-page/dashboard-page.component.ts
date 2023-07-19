@@ -1,4 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { Meta, Title } from '@angular/platform-browser';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Store } from '@ngrx/store';
+import { selectCompProps, selectCurrentComp } from '../store/selectors';
+import { componentType } from '../store/reducers';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -8,7 +14,82 @@ import { Component, Input, OnInit } from '@angular/core';
 export class DashboardPageComponent {
   public cols: number = 4;
   @Input() chartCols!: number;
-  
+
+  // gridByBreakpoint = {
+  //   xl: 4,
+  //   lg: 4,
+  //   md: 2,
+  //   sm: 2,
+  //   xs: 1
+  // }
+  // chartGridByBreakpoint = {
+  //   xl: 5,
+  //   lg: 5,
+  //   md: 3,
+  //   sm: 3,
+  //   xs: 3
+  // }
+  // doughnutCols = 2;
+  // constructor(private meta: Meta, private title: Title, private breakpointObserver: BreakpointObserver) {
+  //   this.meta.addTag({ name: 'description', content: 'How to build Angular Material Dashboard with Cube.js' });
+  //   this.meta.addTag({ name: 'keywords', content: 'Angular, Cube.js, Dashboard, Material UI' });
+
+  //   this.breakpointObserver.observe([
+  //     Breakpoints.XSmall,
+  //     Breakpoints.Small,
+  //     Breakpoints.Medium,
+  //     Breakpoints.Large,
+  //     Breakpoints.XLarge,
+  //   ]).subscribe(result => {
+  //     if (result.matches) {
+  //       if (result.breakpoints[Breakpoints.XSmall]) {
+  //         this.cols = this.gridByBreakpoint.xs;
+  //         this.chartCols = this.chartGridByBreakpoint.xs;
+  //         this.doughnutCols = 3;
+  //       }
+  //       if (result.breakpoints[Breakpoints.Small]) {
+  //         this.cols = this.gridByBreakpoint.sm;
+  //         this.chartCols = this.chartGridByBreakpoint.sm;
+  //         this.doughnutCols = 3;
+  //       }
+  //       if (result.breakpoints[Breakpoints.Medium]) {
+  //         this.cols = this.gridByBreakpoint.md;
+  //         this.chartCols = this.chartGridByBreakpoint.md;
+  //         this.doughnutCols = 3;
+  //       }
+  //       if (result.breakpoints[Breakpoints.Large]) {
+  //         this.cols = this.gridByBreakpoint.lg;
+  //         this.chartCols = this.chartGridByBreakpoint.lg;
+  //       }
+  //       if (result.breakpoints[Breakpoints.XLarge]) {
+  //         this.cols = this.gridByBreakpoint.xl;
+  //         this.chartCols = this.chartGridByBreakpoint.xl;
+  //       }
+  //     }
+  //   });
+  // }
+  // private query = new BehaviorSubject({
+  //   measures: ["Orders.count"],
+  //   timeDimensions: [{ dimension: "Orders.createdAt", granularity: "month", dateRange: "This year" }],
+  //   dimensions: ["Orders.status"],
+  //   filters: [{ dimension: "Orders.status", operator: "notEquals", values: ["completed"] }]
+  // });
+  // private doughnutQuery = new BehaviorSubject({
+  //   measures: ['Orders.count'],
+  //   timeDimensions: [
+  //     {
+  //       dimension: 'Orders.createdAt',
+  //     },
+  //   ],
+  //   filters: [],
+  //   dimensions: ['Orders.status'],
+  // });
+  // changeDateRange = (value) => {
+  //   this.query.next({
+  //     ...this.query.value,
+  //     timeDimensions: [{ dimension: "Orders.createdAt", granularity: "month", dateRange: value }]
+  //   });
+  // };
   public donutChartOptions1 = {
     chart: {
       type: 'pie',
@@ -214,5 +295,57 @@ export class DashboardPageComponent {
     },
   ];
 
-  
+  constructor(private store: Store) {}
+
+  public UpperDonut!: string;
+
+  changeProps(obj: componentType[]) {
+    let newOptions;
+    newOptions = { ...this.donutChartOptions1 };
+    newOptions.chart.width = obj[4].width as number;
+    newOptions.chart.height = obj[4].height as number;
+    this.donutChartOptions1 = newOptions;
+
+    newOptions = { ...this.donutChartOptions2 };
+    newOptions.chart.width = obj[5].width as number;
+    newOptions.chart.height = obj[5].height as number;
+    this.donutChartOptions2 = newOptions;
+
+    newOptions = { ...this.barChartOptions };
+    newOptions.chart.width = obj[6].width as number;
+    newOptions.chart.height = obj[6].height as number;
+    this.barChartOptions = newOptions;
+  }
+
+  changeCardPosition(obj: componentType[]) {
+    let newKPICards: any[] = [];
+    obj.map((item) => {
+      this.KPICards.map((value) => {
+        if (value.id == item.name) {
+          newKPICards.push(value);
+        }
+      });
+    });
+    this.KPICards = newKPICards;
+    console.log(this.KPICards);
+  }
+
+  changeDonutPosition(obj: componentType[]) {
+    if (!this.UpperDonut) this.UpperDonut = obj[4].name;
+    console.log(this.UpperDonut, obj[4].name, 'qwertyuivvs');
+    if (this.UpperDonut != obj[4].name) {
+      let temp = this.donutChartOptions1;
+      this.donutChartOptions1 = this.donutChartOptions2;
+      this.donutChartOptions2 = temp;
+      this.UpperDonut = obj[4].name;
+    }
+  }
+
+  ngOnInit() {
+    this.store.select(selectCompProps).subscribe((item) => {
+      this.changeCardPosition(item);
+      this.changeDonutPosition(item);
+      this.changeProps(item);
+    });
+  }
 }
